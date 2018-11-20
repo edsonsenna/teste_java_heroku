@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Análise de Requisitos - Clientes</title>
+    </h:head>
+
+    <h:body>
+        <h:form>
+            <p:growl id="growl" showDetail="true" sticky="true"/>
+            <p:panel header="Cadastro de Requisito">
+                <h:panelGrid columns="2" cellpadding="4">
+                    <h:outputText value="ID: " />
+                    <p:inputText value="#{clienteBean.clienteAtual.id}"  
+                                 converterMessage="Insira um valor numérico">
+                        <f:convertNumber/>
+                    </p:inputText>
+
+                    <h:outputText value="Nome Completo: " />
+                    <p:inputText value="#{clienteBean.clienteAtual.fullName}" 
+                        required="true" requiredMessage="Nome é obrigatório!"/>
+                    
+                    <h:outputText value="Usuário: " />
+                    <p:inputText value="#{clienteBean.clienteAtual.user}" 
+                        required="true" requiredMessage="Usuário é obrigatório!"/>
+
+                    <h:outputText value="Senha: " />
+                    <p:password required="true" value="#{clienteBean.clienteAtual.password}" 
+                                requiredMessage="Usuário é obrigatório!"/>
+                    
+                    <h:outputText value="Stauts: " />
+                    <p:selectOneButton value="#{clienteBean.clienteAtual.status}" >
+                        <f:selectItem itemLabel="Ativo" itemValue="a"/>
+                        <f:selectItem itemLabel="Inátivo" itemValue="i"/>        
+                    </p:selectOneButton>
+
+                    <p:commandButton value="Cadastrar" update="@form"
+                                     action="#{clienteBean.salvar()}" />
+                </h:panelGrid>
+            </p:panel>
+            
+            <p:panel header="Listagem de Requisito" >
+                <p:dataTable var="item" value="#{clienteBean.clienteList}" paginator="true"
+                             paginatorAlwaysVisible="false" rows="5" sortOrder="ascending"
+                             paginatorPosition="bottom"
+                             sortBy="#{item.id}"
+                             tableStyle="width:auto"
+                             
+                             >
+                    <p:column headerText="S" >
+                        <p:graphicImage value="#{item.statusImg}" height="12" width="12" />
+                    </p:column>
+                        
+                    <p:column headerText="ID:">
+                        <h:outputText value="#{item.id}"/>
+                    </p:column>
+                    <p:column headerText="Nome Completo" filterBy="#{item.fullName}">
+                        <h:outputText value="#{item.fullName}"/>
+                    </p:column>
+                     <p:column headerText="Usuário:">
+                        <h:outputText value="#{item.user}"/>
+                    </p:column>
+                    <p:column headerText="Data">
+                        <h:outputText value="#{item.creationDate}"/>
+                    </p:column>
+                    <p:column style="width:32px;text-align: center">
+                        <p:commandButton update="@form" process="@this" icon="fa fa-edit" title="Details">
+                           <f:setPropertyActionListener value="#{item}" target="#{clienteBean.clienteAtual}" />
+                       </p:commandButton>
+                   </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:dialog header="Requisito" widgetVar="dlgRequisito"
+                      modal="true" resizable="false">
+                
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</html>

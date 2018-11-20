@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head>
+        <title>AI Risk</title>
+    </h:head>
+
+    <h:body style="overflow:hidden">
+        <h:form id="formRequisito">
+            <ui:include src="header.xhtml" />
+            <p:dialog header="Cadastro de Requisitos" 
+                      closable="true"
+                      id="dlgRequisitoID" 
+                      widgetVar="dlgRequisito" 
+                      visible="false" 
+                      position="center" 
+                      responsive="true" style="font-size: 12px">
+                <p:tabView id="tbvRequisito">
+                    <p:tab title="Geral">
+                        <h:panelGrid columns="2" cellpadding="4" id="gridRequisito">
+                            <h:outputText value="ID: " />
+                            <p:inputText value="#{requisitoBean.requisitoAtual.id}" readonly="true" 
+                                         converterMessage="Insira um valor numérico"  >
+                                <f:convertNumber/>
+                            </p:inputText>
+
+                            <h:outputText value="Descrição: " />
+                            <p:inputText value="#{requisitoBean.requisitoAtual.descricao}" 
+                                         required="true" 
+                                         requiredMessage="Descrição é obrigatório"/>
+
+                            <h:outputText value="Potencial Risco:" />
+                            <p:selectOneButton value="#{requisitoBean.requisitoAtual.potencialRisco}">
+                                <f:selectItem itemLabel="Alto" itemValue="a" />
+                                <f:selectItem itemLabel="Médio" itemValue="m" />
+                                <f:selectItem itemLabel="Baixo" itemValue="b" />
+                                <f:selectItem itemLabel="Sem risco" itemValue="s" />
+                            </p:selectOneButton>
+
+
+                        </h:panelGrid>
+                    </p:tab>
+                    <p:tab title="Risco">
+
+                    </p:tab>
+
+                    <p:tab title="Usuario">
+
+                    </p:tab>
+                </p:tabView>
+                <f:facet name="footer">
+                    <div style="float:left">
+                        
+                          
+                        <h:panelGrid columns="1">
+                            <p:commandButton value="Deletar" update="@form :formRequisito:requisitoTblID"
+                                             icon="fa fa-trash" action="#{requisitoBean.deletarRequisito}"
+                                             rendered="#{requisitoBean.requisitoAtual.id ne null}"
+                                             />
+                        </h:panelGrid>
+                            
+                       
+                    </div>
+                    <div style="float:right">
+                        <h:panelGrid columns="2">
+                            <p:commandButton value="Confirmar" update="@form" 
+                                             action="#{requisitoBean.salvar}" onsuccess="PF('dlgRequisito').hide()" />
+
+                            <p:commandButton value="Cancelar" 
+                                             process="@this" immediate="true" onclick="PF('dlgRequisito').hide()"/>
+                        </h:panelGrid>
+                    </div>
+                </f:facet>
+            </p:dialog>
+
+            <p:panel header="Listagem de requisitos">
+                <f:facet name="header">
+                    <div style="float: left; ">
+                        <h:outputText value="Listagem de Requisitos" />
+                    </div>
+                    <div style="float: right" >
+                        <p:breadCrumb homeDisplay="icon" styleClass="ui-widget-header"
+                                      style="border:none;font-size:12px;background: transparent !important; padding: 0; margin-bottom: 2px; ">
+                            <p:menuitem value="Home" url="#" />
+                            <p:menuitem value="Requisitos" url="#" />                            
+                        </p:breadCrumb>
+                    </div>
+                </f:facet>
+                <p:dataTable var="item" value="#{requisitoBean.requisitoList}" paginator="false"
+                             paginatorAlwaysVisible="false"  paginatorPosition="bottom" widgetVar="requisitoTbl"
+                             rowHover="true"  scrollHeight="310" scrollable="true" id="requisitoTblID"
+                             sortOrder="ascending" sortBy="#{item.id}" style="font-size: 12px" >
+
+                    <p:column headerText="Potencial" style="width: 5%" filterBy="#{item.potencialRisco}" filterStyle="font-size:9px">
+                        <p:graphicImage value="#{item.potencialRiscoImg}" height="24" width="24" />
+                        <f:facet name="filter" >
+                            <p:selectOneMenu onchange="PF('requisitoTbl').filter()"
+                                             style="width:auto">
+                                <f:selectItem itemLabel="" itemValue=""     />
+                                <f:selectItem itemLabel="Alto" itemValue="a" />
+                                <f:selectItem itemLabel="Médio" itemValue="m" />
+                                <f:selectItem itemLabel="Baixo" itemValue="b" />
+                                <f:selectItem itemLabel="Sem risco" itemValue="s" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:column>
+
+                    <p:column headerText="ID" sortBy="#{item.id}"  style="width: 5%" priority="5">
+                        <h:outputText value="#{item.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Data" sortBy="#{item.dataRequisito}" style="width:10%">
+                        <h:outputText value="#{item.dataRequisito}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Descrição" sortBy="#{item.descricao}" style="width: 25%"
+                              filterBy="#{item.descricao}" >
+                        <h:outputText value="#{item.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Usuário" style="width: 10%"  sortBy="#{item.usuario}" 
+                              filterBy="#{item.usuario}" >
+                        <h:outputText value="#{item.usuario}"/>
+                    </p:column>
+
+                    <p:column style="width:32px;text-align: center">
+                        <p:commandButton update=":formRequisito:dlgRequisitoID" process="@this"  icon="fa fa-edit" title="View" oncomplete="PF('dlgRequisito').show()">
+                            <f:setPropertyActionListener value="#{item}" target="#{requisitoBean.requisitoAtual}" />
+                        </p:commandButton>
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:toolbar id="toolbarRequisito" style="font-size:12px">
+                            <f:facet name="left">
+
+                                <p:commandButton  icon="fa fa-plus"
+                                                 action="#{requisitoBean.novo}" 
+                                                 update="@form" process="@this" 
+                                                 oncomplete="PF('dlgRequisito').show()"/>
+
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="img/excel-icon.png" width="24" />
+                                    <p:dataExporter type="xls" target="formRequisito:requisitoTblID"
+                                                    fileName="clientes" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="img/pdf-icon.png" width="24" />
+                                    <p:dataExporter type="pdf" target="formRequisito:requisitoTblID"
+                                                    fileName="clientes" />
+                                </h:commandLink>
+                            </f:facet>
+                        </p:toolbar>
+                    </f:facet>
+
+                </p:dataTable>
+            </p:panel>
+
+
+        </h:form>
+    </h:body>
+</html>
